@@ -13,16 +13,20 @@ const articleStyle = {
   margin: '0 auto',
   color: 'olive'
 }
+const errorMessage = {
+  color: 'red'
+}
 
 let NewsItem = ({ article }) => (
   article ?
     <article style={articleStyle} >
-      <div>
+      {article.error && <h2 style={errorMessage}>{article.error}</h2>}
+      {article.title && <div>
         <h1>{article.title}</h1>
         <img style={imgStyle} src={article.urlToImage} alt="" />
         <h2>{article.description}</h2>
         <a href={article.url} target="_blank">READ MORE</a>
-      </div>
+      </div>}
     </article> :
     null
 );
