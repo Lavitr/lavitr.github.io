@@ -26,3 +26,7 @@ render(
   document.getElementById('root'),
 );
 
+if (module.hot) {
+  module.hot.accept(App);
+}
+

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { getNews } from '../actions'
 
 let styles = {
-  backgroundColor: 'HotPink ',
+  backgroundColor: 'HotPink',
   width: '250px',
   height: '100px',
   borderRadius: '100px',
