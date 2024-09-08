@@ -1,13 +1,9 @@
 {
-    "presets": [
-      "flow",
-      "env",
-      "react"
-    ],
-    "plugins": [
-      "transform-object-rest-spread",
-      "transform-runtime",
-      ["react-flow-props-to-prop-types", {  }]
-    ]
-  }
-  
+  "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+  ],
+  "plugins": [
+      "@babel/plugin-proposal-class-properties",
+  ]
+}
