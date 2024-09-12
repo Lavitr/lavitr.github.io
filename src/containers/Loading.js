@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux'
 import img from '../loading_spinner.gif'
 
-let Laoading = ({ loading }) => (
+let Loading = ({ loading }) => (
 
   loading ?
     <div style={{ textAlign: 'center' }}>
@@ -16,12 +16,12 @@ const mapStateToProps = (state) => ({
   loading: state.loading
 })
 
-Laoading = connect(
+Loading = connect(
   mapStateToProps,
   null
-)(Laoading)
+)(Loading)
 
 
-export default Laoading;
+export default Loading;
 
 
