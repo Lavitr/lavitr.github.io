@@ -1,0 +1,90 @@
+name: Release The Deployed Code
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: 'Environment to run the workflow against'
+        type: choice
+        required: true
+        options:
+        - sandbox
+        - distro
+        - lightning
+        - validation
+        - innovate
+        - production
+      build_id:
+        description: 'Build ID to publish to the Stage as the Default Front End'
+        type: string
+        required: true
+env:
+  ssm_suffix: "portal-build"
+  ssm_prefix: "/platform-proxy"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  release-front-end-assets:
+    runs-on: [ubuntu-latest, self-hosted]
+    name: Deploy Frontend Assets
+    if: inputs.build_id != '' && inputs.stage != ''
+    outputs:
+      deploy_time: ${{ steps.output.outputs.deployment_time }}
+      deploy_status: ${{ steps.output.outputs.deployment_status }}
+      deploy_approver: ${{ steps.output.outputs.deployment_approver }}
+
+    steps:
+      - name: Configure Non Prod AWS Role
+        id: aws-role-non-prod
+        if: contains(fromJSON('["validation", "sandbox", "distro", "lightning"]'), inputs.stage)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::571663699033:role/github-actions-nonprod-repo-access"
+
+      - name: Configure Prod AWS Role
+        if: contains(fromJSON('["innovate", "production"]'), inputs.stage)
+        id: aws-role-prod
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: "arn:aws:iam::405317316076:role/github-actions-prod-repo-access"
+
+      - name: Release Front End Code to Selected Stage
+        run: |
+          CURRENT=$(aws ssm get-parameter --name "${{ env.ssm_prefix }}/${{ github.event.inputs.stage }}/${{ env.ssm_suffix }}" --query "Parameter.Value" --output text 2>/dev/null || echo "nil")
+          echo "The current Build ID: $CURRENT is being replaced with ${{ github.event.inputs.build_id }}"
+
+          aws ssm put-parameter \
+          --name "${{ env.ssm_prefix }}/${{ github.event.inputs.stage }}/${{ env.ssm_suffix }}" \
+          --type "String" \
+          --value "${{ github.event.inputs.build_id }}" \
+          --overwrite
+
+      - name: output
+        id: output
+        run: |
+          echo "deployment_time=$(date +'%Y-%m-%dT%H:%M:%S')" >> $GITHUB_OUTPUT
+          echo "deployment_status=success" >> $GITHUB_OUTPUT
+          echo "deployment_approver=${{ github.event.deployment_status.reviewer.login }}" >> $GITHUB_OUTPUT
+          echo $GITHUB_ENV
+
+  ir-generation:
+    if: contains(fromJSON('["validation", "innovate", "production", "distro"]'), inputs.stage)
+    uses: mdsol/platform-github-workflows/.github/workflows/ir.yml@v1.3.7
+    needs:
+      - release-front-end-assets
+    secrets: inherit
+    with:
+      stage: ${{ inputs.stage }}
+      generate_ir: true
+      deployment_time: ${{ needs.release-front-end-assets.outputs.deploy_time }}
+      deployment_status: ${{ needs.release-front-end-assets.outputs.deploy_status }}
+      deployment_approver: ${{ needs.release-front-end-assets.outputs.deploy_approver }}
+      ir_s3_bucket: "platform-installation-reports"
+      iam_role: "arn:aws:iam::405317316076:role/github-actions-prod-repo-access"
