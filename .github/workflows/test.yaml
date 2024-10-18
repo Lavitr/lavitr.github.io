@@ -1,6 +1,15 @@
 name: Mixed inputs
 
 on:
+  push:
+    branches:
+      - "test2"
+  pull_request:
+    branches:
+      - "main" 
+    paths:
+      - ".github/workflows/test.yaml"
+
   workflow_dispatch:
     inputs:
       name:
@@ -9,13 +18,10 @@ on:
         options: 
         - monalisa
         - cschleiden
-      message:
         required: true
       use-emoji:
         type: boolean
         description: Include 🎉🤣 emojis
-      environment:
-        type: environment
 
 jobs:
   greet:
