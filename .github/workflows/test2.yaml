@@ -1,0 +1,39 @@
+name: test2
+
+on:
+  push:
+    branches:
+      - "test"
+  pull_request:
+    branches:
+      - "main" 
+    paths:
+      - ".github/workflows/test2.yaml"
+
+  workflow_dispatch:
+    inputs:
+      name:
+        type: choice
+        description: Who to greet
+        options: 
+        - monalisa
+        - cschleiden
+        required: true
+      use-emoji:
+        type: boolean
+        description: Include 🎉🤣 emojis
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.x'
+    - run: npm ci
+    - run: npm run build
+    - run: npm test
+    - run: npm run lint
