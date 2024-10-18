@@ -1,0 +1,34 @@
+name: Mixed inputs
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main" 
+
+  workflow_dispatch:
+    inputs:
+      name:
+        type: choice
+        description: Who to greet
+        options: 
+        - monalisa
+        - cschleiden
+        - hujjj
+        required: true
+      use-emoji:
+        type: boolean
+        description: Include 🎉🤣 emojis
+      message:
+        description: message
+        type: string
+        required: true
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send greeting
+      run: echo "${{ github.event.inputs.message }} ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
