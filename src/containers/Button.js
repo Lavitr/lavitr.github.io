@@ -28,7 +28,7 @@ class Button extends React.Component {
     );
   }
 
-};
+}
 
 const mapDispatchToProps = {
   getNews: getNews,
