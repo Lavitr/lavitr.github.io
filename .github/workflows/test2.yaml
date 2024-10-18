@@ -3,25 +3,12 @@ name: test2
 on:
   push:
     branches:
-      - "test"
+      - "test2"
   pull_request:
     branches:
       - "main" 
     paths:
       - ".github/workflows/test2.yaml"
-
-  workflow_dispatch:
-    inputs:
-      name:
-        type: choice
-        description: Who to greet
-        options: 
-        - monalisa
-        - cschleiden
-        required: true
-      use-emoji:
-        type: boolean
-        description: Include 🎉🤣 emojis
 
 jobs:
   build:
