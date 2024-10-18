@@ -11,7 +11,7 @@ on:
       - ".github/workflows/test2.yaml"
 
 jobs:
-  build:
+  release-front-end-assets:
     runs-on: ubuntu-latest
 
     steps:
