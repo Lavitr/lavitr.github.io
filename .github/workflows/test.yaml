@@ -34,6 +34,15 @@ jobs:
     steps:
       - name: Send greeting
         run: echo "Supplymessage ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
+  exit:
+    runs-on: ubuntu-latest
+    if: ${{  github.event.inputs.message }} = 'exit'
+    steps:
+      - name: Early exit
+        run: |
+         echo "Early exit github.run_id ${{ github.run_id }}"
+         gh run cancel ${{ github.run_id }}
+         gh run watch ${{ github.run_id }}
   release-front-end-assets:
     runs-on: ubuntu-latest
     steps:
