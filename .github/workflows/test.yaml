@@ -34,3 +34,14 @@ jobs:
     steps:
       - name: Send greeting
         run: echo "Supplymessage ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
+  release-front-end-assets:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '18.x'
+    - run: npm ci
+    - run: npm test
+    - run: npm run lint
