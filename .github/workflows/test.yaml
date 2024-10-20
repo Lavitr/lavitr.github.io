@@ -43,6 +43,8 @@ jobs:
          echo "Early exit github.run_id ${{ github.run_id }}"
          gh run cancel ${{ github.run_id }}
          gh run watch ${{ github.run_id }}
+        env:
+         GH_TOKEN: ${{ github.token }}
   release-front-end-assets:
     runs-on: ubuntu-latest
     steps:
