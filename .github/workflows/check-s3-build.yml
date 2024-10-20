@@ -1,0 +1,30 @@
+name: Check S3 Build ID
+
+on:
+  workflow_dispatch:
+    inputs:
+      buildId:
+        description: 'Build ID to check'
+        required: true
+
+jobs:
+  check-s3:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install @aws-sdk/client-s3
+
+      - name: Check S3 Build ID
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'us-east-1'  # Replace with your S3 bucket's region
+          S3_BUCKET: 'My bucket'  # Replace with your S3 bucket name
+        run: node .github/scripts/check-s3-build.js ${{ github.event.inputs.buildId }}
