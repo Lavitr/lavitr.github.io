@@ -39,12 +39,13 @@ jobs:
     steps:
       - name: Early exit
         run: |
-         if [[ ${{  github.event.inputs.message }} =~ 'exit' ]];
+         if [[ "${{ github.event.inputs.message }}" =~ exit ]];
          then
           echo "Early exit github.run_id ${{ github.run_id }}"
           exit 1
          else 
           echo "Run test"
+         fi
       - uses: actions/checkout@v2
       - name: Use Node.js
         uses: actions/setup-node@v2
