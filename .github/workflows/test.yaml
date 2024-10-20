@@ -21,11 +21,16 @@ on:
       message:
         description: message
         type: string
-        required: true
 jobs:
   greet:
     runs-on: ubuntu-latest
-
+    if:  ${{ !! github.event.inputs.message  }}
     steps:
     - name: Send greeting
       run: echo "${{ github.event.inputs.message }} ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
+  no-greet:
+    runs-on: ubuntu-latest
+    if: ${{ ! github.event.inputs.message  }}
+    steps:
+      - name: Send greeting
+        run: echo "Supplymessage ${{ fromJSON('["", "🥳"]')[github.event.inputs.use-emoji == 'true'] }} ${{ github.event.inputs.name }}"
