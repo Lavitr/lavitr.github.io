@@ -16,4 +16,4 @@ jobs:
 
     steps:
     - name: Use Node.js
-      run: echo "Hello ${{ github.event.inputs.message }} 
+      run: echo "Hello ${{ github.event.inputs.message }}"
