@@ -1,0 +1,19 @@
+name: test2
+
+on:
+  push:
+    branches:
+      - "test3"
+  pull_request:
+    branches:
+      - "main" 
+    paths:
+      - ".github/workflows/test3.yaml"
+
+jobs:
+  release-front-end-assets:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Use Node.js
+      run: echo "Hello ${{ github.event.inputs.message }} 
